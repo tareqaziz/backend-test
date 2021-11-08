@@ -41,12 +41,17 @@ namespace BackendCore.Services
             var commentsDto = new List<Models.CommentsDto>();
             IEnumerable<Models.Comments> comments = new List<Models.Comments>();
 
+            int[] blackList = { 2, 5};
+
+
             var commentsResponse = await GetComments();
 
 
+            var result = commentsResponse.Where(p => !blackList.Any(p2 => p2 == p.Id)).ToList();
+
             if (string.IsNullOrEmpty(filter))
             {
-                return commentsResponse.Select(c =>
+                return result.Select(c =>
                              new Models.CommentsDto()
                              {
                                  PostId = c.PostId,
@@ -62,7 +67,7 @@ namespace BackendCore.Services
             int value;
             if (int.TryParse(filter, out value))
             {
-                comments = commentsResponse.Where(f =>
+                comments = result.Where(f =>
                     f.PostId == Convert.ToInt32(filter) ||
                     f.Id == Convert.ToInt32(filter) ||
                     f.Name.ToLower().Contains(filter) ||
@@ -71,7 +76,7 @@ namespace BackendCore.Services
             }
             else
             {
-                comments = commentsResponse.Where(f =>
+                comments = result.Where(f =>
                     f.Name.ToLower().Contains(filter) ||
                     f.Email.ToLower().Contains(filter) ||
                     f.Body.ToLower().Contains(filter));
