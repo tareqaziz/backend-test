@@ -43,7 +43,6 @@ namespace BackendCore.Services
 
             var commentsResponse = await GetComments();
 
-            filter = filter.Trim().ToLower();
 
             if (string.IsNullOrEmpty(filter))
             {
@@ -58,6 +57,8 @@ namespace BackendCore.Services
                              });
             }
 
+            filter = filter.Trim().ToLower();
+            
             int value;
             if (int.TryParse(filter, out value))
             {
